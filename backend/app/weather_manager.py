@@ -12,7 +12,7 @@ class WeatherManager:
     def __init__(self, api_instance: OpenWeatherAPI, cache_instance: Cache, city_name: str = None):
         self.__api = api_instance
         self.__cache = cache_instance
-        self.city = city_name
+        self.city = city_name.capitalize() if city_name else None
 
     def get_cached_cities_weather(self, max_number: int) -> dict:
         max_number = max_number or 5
@@ -49,5 +49,5 @@ class WeatherManager:
 
     def _cache_fetched_data(self, data: dict) -> None:
         cached_cities = self.__cache.get("cached_cities") or {}
-        cached_cities.update(data)
+        cached_cities.update({data["name"]: data})
         self.__cache.set("cached_cities", cached_cities)
