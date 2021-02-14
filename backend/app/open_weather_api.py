@@ -10,7 +10,7 @@ from .exceptions import OpenWeatherAPIException
 class OpenWeatherAPI:
     BASE_URL = "https://api.openweathermap.org/data/2.5/weather"
     DEFAULT_QUERY_PARAMS = {
-        "appid": os.getenv("OPEN_WEATHER_API_KEY", "123016230269810fb71a3ae2b57643ae"),
+        "appid": os.getenv("OPEN_WEATHER_API_KEY"),
         "units": "metric",
     }
 
