@@ -36,8 +36,9 @@ def test_get_cached_cities(test_client):
 
     response = test_client.get('/weather')
     assert response.status_code == 200
+
     cached_data = json.loads(response.data)
-    assert cached_data == {city_name: city_data[city_name]}
+    assert cached_data == [city_data]
 
 
 def test_get_city_weather(test_client):
@@ -47,9 +48,8 @@ def test_get_city_weather(test_client):
     assert response.status_code == 200
 
     data = json.loads(response.data)
-    assert city_name in data.keys()
-
-    assert ('weather' and 'temperature') in data[city_name].keys()
+    assert data.get('city') == city_name
+    assert ('weather' and 'temperature') in data.keys()
 
 
 def test_get_city_weather_with_invalid_city_name(test_client):
