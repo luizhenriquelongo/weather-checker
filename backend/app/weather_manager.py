@@ -12,7 +12,7 @@ class WeatherManager:
         self.__cache = cache_instance
         self.city = city_name.capitalize() if city_name else None
 
-    def get_cached_cities_weather(self, max_number: int) -> (dict, int):
+    def get_cached_cities_weather(self, max_number: int or None) -> (dict, int):
         """Returns all cached cities up to max_number"""
         max_number = max_number or 5
         cached_cities = self.__cache.get('cached_cities') or {}
@@ -33,10 +33,13 @@ class WeatherManager:
             fetch the OpenWeatherAPI do get the weather data
         """
         city_weather, status_code = self._get_city_weather_from_cache()
-        if not city_weather:
+        if not city_weather and status_code == StatusCode.NOT_FOUND:
             city_weather, status_code = self._fetch_api_data()
 
-        return {self.city: city_weather}, status_code
+        if city_weather:
+            return {self.city: city_weather}, status_code
+
+        return {}, status_code
 
     def _fetch_api_data(self) -> (dict, int):
         """This is used to get a specific city weather data by using an API method"""
@@ -49,7 +52,9 @@ class WeatherManager:
         else:
             if status_code == 200:
                 self._cache_fetched_data(api_data)
-                return self._clean_data(api_data), StatusCode.SUCCESS
+                cleaned_data = self._clean_data(api_data)
+                if cleaned_data:
+                    return cleaned_data, StatusCode.SUCCESS
 
             return {}, StatusCode.NOT_FOUND
 

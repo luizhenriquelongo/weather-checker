@@ -11,6 +11,8 @@ flask-caching = "*"
 python-decouple = "*"
 
 [dev-packages]
+pytest = "*"
+pytest-mock = "*"
 
 [requires]
 python_version = "3.8"
