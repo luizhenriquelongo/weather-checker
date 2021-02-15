@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 
+
 from .open_weather_api import OpenWeatherAPI
 from .weather_manager import WeatherManager
 
@@ -11,16 +12,18 @@ api = OpenWeatherAPI()
 
 class CachedCitiesWeatherView(Resource):
     def get(self):
-        from . import cache
+        from backend.extensions import cache
 
         weather_manager = WeatherManager(api, cache)
         max_number = parser.parse_args().get("max")
-        return weather_manager.get_cached_cities_weather(max_number)
+        weather_data, status_code = weather_manager.get_cached_cities_weather(max_number)
+        return weather_data, status_code
 
 
 class CityWeatherView(Resource):
     def get(self, city_name: str):
-        from . import cache
+        from backend.extensions import cache
 
         weather_manager = WeatherManager(api, cache, city_name)
-        return weather_manager.get_city_weather()
+        weather_data, status_code = weather_manager.get_city_weather()
+        return weather_data, status_code
