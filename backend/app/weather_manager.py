@@ -12,19 +12,17 @@ class WeatherManager:
         self.__cache = cache_instance
         self.city = city_name.capitalize() if city_name else None
 
-    def get_cached_cities_weather(self, max_number: int or None) -> (dict, int):
+    def get_cached_cities_weather(self, max_number: int) -> (dict, int):
         """Returns all cached cities up to max_number"""
-        max_number = max_number or 5
-        cached_cities = self.__cache.get('cached_cities') or {}
+        cached_cities = self.__cache.get('cached_cities')
         if not cached_cities:
-            return {}, StatusCode.NOT_FOUND
+            return [], StatusCode.NOT_FOUND
 
-        cities = list(cached_cities)
-        if len(cities) <= max_number:
+        if len(cached_cities) <= max_number:
             return cached_cities, StatusCode.SUCCESS
 
-        cities = cities[:max_number]
-        return {city: city_data for city, city_data in cached_cities.items() if city in cities}, StatusCode.SUCCESS
+        cities = cached_cities[:max_number]
+        return cities, StatusCode.SUCCESS
 
     def get_city_weather(self) -> (dict, int):
         """
@@ -37,7 +35,7 @@ class WeatherManager:
             city_weather, status_code = self._fetch_api_data()
 
         if city_weather:
-            return {self.city: city_weather}, status_code
+            return city_weather, status_code
 
         return {}, status_code
 
@@ -60,19 +58,21 @@ class WeatherManager:
 
     def _get_city_weather_from_cache(self) -> (dict, int):
         """This is used to retrieve city weather data from cache"""
-        cached_cities = self.__cache.get('cached_cities') or {}
-        if self.city and self.city in cached_cities.keys():
-            return cached_cities[self.city], StatusCode.SUCCESS
+        cached_cities = self.__cache.get('cached_cities') or []
+        cached_city = next((data for data in cached_cities if data.get('city') == self.city), None)
+
+        if self.city and cached_city:
+            return cached_city, StatusCode.SUCCESS
 
         return {}, StatusCode.NOT_FOUND
 
     def _cache_fetched_data(self, data: dict) -> None:
         """This is used to cache city weather data"""
-        cached_cities = self.__cache.get('cached_cities') or {}
+        cached_cities = self.__cache.get('cached_cities') or []
 
         city_data = self._clean_data(data)
         if city_data:
-            cached_cities.update({self.city: city_data})
+            cached_cities.append(city_data)
             self.__cache.set('cached_cities', cached_cities)
 
     def _clean_data(self, data: dict) -> dict or None:
@@ -83,9 +83,11 @@ class WeatherManager:
             weather_condition = None
 
         temperature = data.get('main', {}).get('temp')
+        city = data.get('name')
 
-        if weather_condition and temperature:
+        if weather_condition and temperature and city:
             return {
+                "city": city,
                 "weather": weather_condition,
                 "temperature": f'{int(round(temperature))}ºC'
             }

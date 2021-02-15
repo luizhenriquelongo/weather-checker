@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 
+from flask import current_app
 
 from .open_weather_api import OpenWeatherAPI
 from .weather_manager import WeatherManager
@@ -15,7 +16,7 @@ class CachedCitiesWeatherView(Resource):
         from backend.extensions import cache
 
         weather_manager = WeatherManager(api, cache)
-        max_number = parser.parse_args().get("max")
+        max_number = parser.parse_args().get("max") or current_app.config["MAX_CITIES_TO_RETRIEVE"]
         weather_data, status_code = weather_manager.get_cached_cities_weather(max_number)
         return weather_data, status_code
 
