@@ -5,47 +5,35 @@ import WeatherBuddyAPI from "./api/weatherBuddy";
 import SearchedCityWeather from "./components/searchedCityWeather";
 import CachedCities from "./components/cachedCities";
 import Loader from "./components/loader";
-import { Simulate } from "react-dom/test-utils";
+import PageHeader from "./components/pageHeader";
 
 const App: React.FC = () => {
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [requestError, setRequestError] = useState("");
   const [cityData, setCityData] = useState<ICityWeather | null>(null);
   const [cityName, setCityName] = useState("");
   const [cachedCities, setCachedCities] = useState<ICityWeather[]>([]);
 
-  const getCityWeather = (cityName: string) => {
-    const response = WeatherBuddyAPI.getCityWeather(cityName);
-    if (response) {
-      response
-        .then((response) => {
-          setCityData(response);
-        })
-        .catch((error) => setRequestError(error));
-    }
+  const getCityWeather = async (cityName: string) => {
+    setIsLoading(true);
+    const response = await WeatherBuddyAPI.getCityWeather(cityName);
+    if (response) setCityData(response);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    const getCachedCities = () => {
-      const response = WeatherBuddyAPI.getCachedCities();
-      if (response !== undefined) {
-        response
-          .then((response) => {
-            setCachedCities(response);
-          })
-          .catch((error) => setRequestError(error));
-      }
+    const getCachedCities = async () => {
+      const response = await WeatherBuddyAPI.getCachedCities();
+      if (response !== undefined) setCachedCities(response);
     };
     getCachedCities();
   }, [cityData]);
 
   const handleKeyPressed = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && cityName !== "") {
-      setLoading(true);
       setCityData(null);
       e.preventDefault();
       getCityWeather(cityName);
-      setLoading(false);
     }
   };
 
@@ -58,7 +46,7 @@ const App: React.FC = () => {
         flexDirection: "column",
       }}
     >
-      <h1 style={{ alignSelf: "center" }}>WEATHER BUDDY</h1>
+      <PageHeader title="WEATHER BUDDY" />
 
       <div
         style={{
@@ -77,7 +65,7 @@ const App: React.FC = () => {
           style={{
             height: "2em",
             border: "none",
-            borderBottom: "1px solid #000",
+            borderBottom: "1px solid #CFCFCF",
             margin: "0 10px",
           }}
           name="cityName"
@@ -89,7 +77,7 @@ const App: React.FC = () => {
         />
         <h2 style={{ margin: "0" }}> now?</h2>
       </div>
-      {loading ? <Loader /> : <SearchedCityWeather cityData={cityData} />}
+      {isLoading ? <Loader /> : <SearchedCityWeather cityData={cityData} />}
       <CachedCities cities={cachedCities} />
     </Container>
   );

@@ -9,12 +9,22 @@ export const WeatherCard: React.FC<ICityWeather> = ({
 }) => {
   return (
     <Card.Group
-      style={{ width: "150px", height: "150px", marginTop: ".875rem" }}
+      style={{
+        width: "150px",
+        height: "150px",
+        marginTop: ".875rem",
+        display: "flex",
+        flexDirection: "column",
+        textAlign: "center",
+        margin: ".875rem auto",
+      }}
     >
       <Card>
         <Card.Content>
           <Card.Description>{city}</Card.Description>
-          <Card.Header>{temperature}</Card.Header>
+          <Card.Header style={{ fontSize: "2em", marginTop: ".5rem" }}>
+            {temperature}
+          </Card.Header>
           <Card.Description>{weather}</Card.Description>
         </Card.Content>
       </Card>

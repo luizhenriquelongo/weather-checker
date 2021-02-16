@@ -15,7 +15,7 @@ export const CachedCities: React.FC<IProps> = ({ cities }) => {
         height: "auto",
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-even",
+        justifyContent: "space-evenly",
         alignItems: "center",
         background: "#F2F2F2",
       }}

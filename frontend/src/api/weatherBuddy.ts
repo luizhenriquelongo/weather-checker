@@ -1,4 +1,4 @@
-import axios, { AxiosResponse } from "axios";
+import axios from "axios";
 import { axiosConfig } from "./axios/config";
 import { ICityWeather } from "../types/cityWeather";
 
