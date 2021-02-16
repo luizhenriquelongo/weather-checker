@@ -1,4 +1,5 @@
 import string
+
 from flask_caching import Cache
 
 from backend.app.exceptions import OpenWeatherAPIException
@@ -8,6 +9,7 @@ from backend.app.utils import StatusCode, error_response
 
 class WeatherManager:
     """This class is used to manage all business logic behind views"""
+
     def __init__(self, api_instance: OpenWeatherAPI, cache_instance: Cache, city_name: str = None):
         self.__api = api_instance
         self.__cache = cache_instance
@@ -50,9 +52,9 @@ class WeatherManager:
 
         else:
             if status_code == 200:
-                self._cache_fetched_data(api_data)
                 cleaned_data = self._clean_data(api_data)
                 if cleaned_data:
+                    self._cache_fetched_data(cleaned_data)
                     return cleaned_data, StatusCode.SUCCESS
 
             return {}, StatusCode.NOT_FOUND
@@ -60,9 +62,13 @@ class WeatherManager:
     def _get_city_weather_from_cache(self) -> (dict, int):
         """This is used to retrieve city weather data from cache"""
         cached_cities = self.__cache.get('cached_cities') or []
-        cached_city = next((data for data in cached_cities if data.get('city') == self.city), None)
+        index, cached_city = next(
+            ((index, data) for index, data in enumerate(cached_cities) if data.get('city') == self.city), (None, None))
 
         if self.city and cached_city:
+            cached_cities.pop(index)
+            cached_cities.append(cached_city)
+            self.__cache.set('cached_cities', cached_cities)
             return cached_city, StatusCode.SUCCESS
 
         return {}, StatusCode.NOT_FOUND
@@ -71,9 +77,8 @@ class WeatherManager:
         """This is used to cache city weather data"""
         cached_cities = self.__cache.get('cached_cities') or []
 
-        city_data = self._clean_data(data)
-        if city_data and city_data not in cached_cities:
-            cached_cities.append(city_data)
+        if data and data not in cached_cities:
+            cached_cities.append(data)
             self.__cache.set('cached_cities', cached_cities)
 
     def _clean_data(self, data: dict) -> dict or None:
