@@ -1,85 +1,81 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { ICityWeather } from "./types/cityWeather";
-import { Container } from "semantic-ui-react";
+import { Container, Grid } from "semantic-ui-react";
 import WeatherBuddyAPI from "./api/weatherBuddy";
 import SearchedCityWeather from "./components/searchedCityWeather";
 import CachedCities from "./components/cachedCities";
 import Loader from "./components/loader";
 import PageHeader from "./components/pageHeader";
+import { DefaultGrid, GridRow } from "./styles/grid";
+import { SearchBoxContainer } from "./components/searchBoxContainer/searchBoxContainer";
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
-  const [requestError, setRequestError] = useState("");
+  const [error, setError] = useState(false);
   const [cityData, setCityData] = useState<ICityWeather | null>(null);
   const [cityName, setCityName] = useState("");
   const [cachedCities, setCachedCities] = useState<ICityWeather[]>([]);
 
   const getCityWeather = async (cityName: string) => {
     setIsLoading(true);
-    const response = await WeatherBuddyAPI.getCityWeather(cityName);
-    if (response) setCityData(response);
+    try {
+      const response = await WeatherBuddyAPI.getCityWeather(cityName);
+      if (response) {
+        setError(false);
+        setCityData(response);
+      }
+    } catch (e) {
+      setError(true);
+    }
     setIsLoading(false);
   };
 
-  useEffect(() => {
-    const getCachedCities = async () => {
-      const response = await WeatherBuddyAPI.getCachedCities();
-      if (response !== undefined) setCachedCities(response);
-    };
-    getCachedCities();
-  }, [cityData]);
+  const getCachedCities = async () => {
+    const response = await WeatherBuddyAPI.getCachedCities();
+    if (response !== undefined) setCachedCities(response);
+  };
 
-  const handleKeyPressed = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyPressed = async (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter" && cityName !== "") {
       setCityData(null);
-      e.preventDefault();
-      getCityWeather(cityName);
+      await getCityWeather(cityName);
+      getCachedCities();
     }
   };
 
   return (
-    <Container
-      style={{
-        width: "100%",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-      }}
+    <DefaultGrid
+      columns={1}
+      centered
+      padded
+      textAlign="center"
+      verticalAlign="middle"
     >
-      <PageHeader title="WEATHER BUDDY" />
+      <Grid.Column computer={10} largeScreen={8} mobile={16}>
+        <Grid.Row>
+          <PageHeader title="WEATHER BUDDY" />
+        </Grid.Row>
 
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "row",
-          alignItems: "center",
-          textAlign: "center",
-          alignContent: "center",
-          height: "2em",
-          margin: "0",
-          alignSelf: "center",
-        }}
-      >
-        <h2 style={{ margin: "0" }}>How is the weather in </h2>
-        <input
-          style={{
-            height: "2em",
-            border: "none",
-            borderBottom: "1px solid #CFCFCF",
-            margin: "0 10px",
-          }}
-          name="cityName"
-          type="text"
-          onChange={(e) => {
-            setCityName(e.target.value);
-          }}
-          onKeyDown={handleKeyPressed}
-        />
-        <h2 style={{ margin: "0" }}> now?</h2>
-      </div>
-      {isLoading ? <Loader /> : <SearchedCityWeather cityData={cityData} />}
-      <CachedCities cities={cachedCities} />
-    </Container>
+        <GridRow>
+          <SearchBoxContainer
+            handleKeyPressed={handleKeyPressed}
+            setCityName={setCityName}
+          />
+        </GridRow>
+
+        <Grid.Row>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            <SearchedCityWeather cityData={cityData} error={error} />
+          )}
+        </Grid.Row>
+
+        <Grid.Row>
+          <CachedCities cities={cachedCities} />
+        </Grid.Row>
+      </Grid.Column>
+    </DefaultGrid>
   );
 };
 

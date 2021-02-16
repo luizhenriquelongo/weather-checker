@@ -1,5 +1,6 @@
 import React from "react";
 import { Card } from "semantic-ui-react";
+import { CardGroup, CardHeader } from "./styles";
 import { ICityWeather } from "../../types/cityWeather";
 
 export const WeatherCard: React.FC<ICityWeather> = ({
@@ -8,26 +9,14 @@ export const WeatherCard: React.FC<ICityWeather> = ({
   temperature,
 }) => {
   return (
-    <Card.Group
-      style={{
-        width: "150px",
-        height: "150px",
-        marginTop: ".875rem",
-        display: "flex",
-        flexDirection: "column",
-        textAlign: "center",
-        margin: ".875rem auto",
-      }}
-    >
+    <CardGroup>
       <Card>
         <Card.Content>
           <Card.Description>{city}</Card.Description>
-          <Card.Header style={{ fontSize: "2em", marginTop: ".5rem" }}>
-            {temperature}
-          </Card.Header>
+          <CardHeader>{temperature}</CardHeader>
           <Card.Description>{weather}</Card.Description>
         </Card.Content>
       </Card>
-    </Card.Group>
+    </CardGroup>
   );
 };

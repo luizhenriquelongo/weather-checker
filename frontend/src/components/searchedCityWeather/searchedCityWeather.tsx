@@ -1,17 +1,22 @@
 import React from "react";
 import WeatherCard from "../weatherCard";
-import { Container, Dimmer, Loader, Segment } from "semantic-ui-react";
 import { ICityWeather } from "../../types/cityWeather";
+import { Wrapper } from "./styles";
 
 interface IProps {
   cityData: ICityWeather | null;
+  error: boolean;
 }
 
-export const SearchedCityWeather: React.FC<IProps> = ({ cityData }) => {
+export const SearchedCityWeather: React.FC<IProps> = ({ cityData, error }) => {
+  if (error)
+    return (
+      <Wrapper>
+        <h1>Sorry. We couldn't find the specified city.</h1>
+      </Wrapper>
+    );
   return (
-    <Container
-      style={{ display: "flex", justifyContent: "center", margin: "50px" }}
-    >
+    <Wrapper>
       {cityData && (
         <WeatherCard
           city={cityData.city}
@@ -19,6 +24,6 @@ export const SearchedCityWeather: React.FC<IProps> = ({ cityData }) => {
           temperature={cityData.temperature}
         />
       )}
-    </Container>
+    </Wrapper>
   );
 };

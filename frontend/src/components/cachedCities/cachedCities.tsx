@@ -1,25 +1,15 @@
 import React from "react";
 import { ICityWeather } from "../../types/cityWeather";
 import WeatherCard from "../weatherCard";
-import { Container } from "semantic-ui-react";
+import { CachedSegment } from "./styles";
 
 interface IProps {
   cities: ICityWeather[];
 }
 
 export const CachedCities: React.FC<IProps> = ({ cities }) => {
-  return (
-    <Container
-      style={{
-        width: "800px",
-        height: "auto",
-        display: "flex",
-        flexDirection: "row",
-        justifyContent: "space-evenly",
-        alignItems: "center",
-        background: "#F2F2F2",
-      }}
-    >
+  return cities.length > 0 ? (
+    <CachedSegment placeholder>
       {cities &&
         cities.map((city) => (
           <WeatherCard
@@ -29,6 +19,6 @@ export const CachedCities: React.FC<IProps> = ({ cities }) => {
             temperature={city.temperature}
           />
         ))}
-    </Container>
-  );
+    </CachedSegment>
+  ) : null;
 };
