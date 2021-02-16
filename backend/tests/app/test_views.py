@@ -20,21 +20,23 @@ def test_client():
 
 # Next 2 tests should always be on top of the file to avoid 5 minutes cache to keep data from other tests!
 def test_get_cached_cities_with_empty_cache(test_client):
-    response = test_client.get('/weather')
-    assert response.status_code == 404
+    response = test_client.get('api/v1/weather')
+    assert json.loads(response.data) == []
+    assert response.status_code == 200
 
 
 def test_get_cached_cities(test_client):
     city_name = "Pindamonhangaba"
 
-    response = test_client.get('/weather')
-    assert response.status_code == 404
+    response = test_client.get('api/v1/weather')
+    assert json.loads(response.data) == []
+    assert response.status_code == 200
 
-    response = test_client.get(f'/weather/{city_name}')
+    response = test_client.get(f'api/v1/weather/{city_name}')
     assert response.status_code == 200
     city_data = json.loads(response.data)
 
-    response = test_client.get('/weather')
+    response = test_client.get('api/v1/weather')
     assert response.status_code == 200
 
     cached_data = json.loads(response.data)
@@ -43,7 +45,7 @@ def test_get_cached_cities(test_client):
 
 def test_get_city_weather(test_client):
     city_name = "Pindamonhangaba"
-    response = test_client.get(f'/weather/{city_name}')
+    response = test_client.get(f'api/v1/weather/{city_name}')
 
     assert response.status_code == 200
 
@@ -54,7 +56,7 @@ def test_get_city_weather(test_client):
 
 def test_get_city_weather_with_invalid_city_name(test_client):
     city_name = "gfghjkj"
-    response = test_client.get(f'/weather/{city_name}')
+    response = test_client.get(f'api/v1/weather/{city_name}')
 
     assert response.status_code == 404
 

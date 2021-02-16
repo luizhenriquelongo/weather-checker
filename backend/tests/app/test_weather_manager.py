@@ -50,7 +50,7 @@ def test_get_cached_cities_weather_with_empty_cache(mocker):
     cache.get.assert_called_with('cached_cities')
 
     assert weather_data == []
-    assert status_code == 404
+    assert status_code == 200
 
 
 def test_get_cached_cities_weather_with_default_max_number(mocker, cached_cities):

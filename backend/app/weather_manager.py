@@ -16,12 +16,12 @@ class WeatherManager:
         """Returns all cached cities up to max_number"""
         cached_cities = self.__cache.get('cached_cities')
         if not cached_cities:
-            return [], StatusCode.NOT_FOUND
+            return [], StatusCode.SUCCESS
 
         if len(cached_cities) <= max_number:
-            return cached_cities, StatusCode.SUCCESS
+            return cached_cities[::-1], StatusCode.SUCCESS
 
-        cities = cached_cities[:max_number]
+        cities = cached_cities[::-1][:max_number]
         return cities, StatusCode.SUCCESS
 
     def get_city_weather(self) -> (dict, int):
@@ -71,7 +71,7 @@ class WeatherManager:
         cached_cities = self.__cache.get('cached_cities') or []
 
         city_data = self._clean_data(data)
-        if city_data:
+        if city_data and city_data not in cached_cities:
             cached_cities.append(city_data)
             self.__cache.set('cached_cities', cached_cities)
 

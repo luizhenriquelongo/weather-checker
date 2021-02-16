@@ -9,6 +9,7 @@ flask-restful = "*"
 requests = "*"
 flask-caching = "*"
 python-decouple = "*"
+flask-cors = "*"
 
 [dev-packages]
 pytest = "*"
