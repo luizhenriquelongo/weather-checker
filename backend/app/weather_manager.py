@@ -1,3 +1,4 @@
+import string
 from flask_caching import Cache
 
 from backend.app.exceptions import OpenWeatherAPIException
@@ -10,7 +11,7 @@ class WeatherManager:
     def __init__(self, api_instance: OpenWeatherAPI, cache_instance: Cache, city_name: str = None):
         self.__api = api_instance
         self.__cache = cache_instance
-        self.city = city_name.capitalize() if city_name else None
+        self.city = string.capwords(city_name) if city_name else None
 
     def get_cached_cities_weather(self, max_number: int) -> (dict, int):
         """Returns all cached cities up to max_number"""
@@ -83,11 +84,10 @@ class WeatherManager:
             weather_condition = None
 
         temperature = data.get('main', {}).get('temp')
-        city = data.get('name')
 
-        if weather_condition and temperature and city:
+        if weather_condition and temperature:
             return {
-                "city": city,
+                "city": self.city,
                 "weather": weather_condition,
                 "temperature": f'{int(round(temperature))}ºC'
             }
