@@ -3,7 +3,7 @@
 Hello there! This project was very fun to develop and it's a cool weather buddy that can help you to know the weather on a specific city... let me show you how to try it.
 ## The Options
 
-- If you just want to try it out, you can [click here](https://ec2-18-230-74-213.sa-east-1.compute.amazonaws.com/) and have some fun!
+- If you just want to try it out, you can [click here](http://ec2-18-230-74-213.sa-east-1.compute.amazonaws.com/) and have some fun!
 - If you want to set it up and running on your own machine, you can follow the tutorial bellow.
 
 ## Installation
