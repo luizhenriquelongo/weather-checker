@@ -4,7 +4,6 @@ import { ICityWeather } from "../types/cityWeather";
 
 const api = axios.create({
   ...axiosConfig,
-  baseURL: `${axiosConfig.baseURL}/api/v1/`,
 });
 
 const WeatherBuddyAPI = {
