@@ -11,4 +11,5 @@ services:
     build: ./frontend
     container_name: react
     ports:
+      - "443:80"
       - "80:80"
