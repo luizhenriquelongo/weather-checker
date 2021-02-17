@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import { ICityWeather } from "./types/cityWeather";
-import { Container, Grid } from "semantic-ui-react";
+import { Grid } from "semantic-ui-react";
 import WeatherBuddyAPI from "./api/weatherBuddy";
 import SearchedCityWeather from "./components/searchedCityWeather";
 import CachedCities from "./components/cachedCities";
 import Loader from "./components/loader";
 import PageHeader from "./components/pageHeader";
 import { DefaultGrid, GridRow } from "./styles/grid";
-import { SearchBoxContainer } from "./components/searchBoxContainer/searchBoxContainer";
+import SearchBoxContainer from "./components/searchBoxContainer";
 
 const App: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);

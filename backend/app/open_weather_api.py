@@ -3,8 +3,8 @@ import urllib.parse
 import requests
 from requests import RequestException
 
-from backend.app.exceptions import OpenWeatherAPIException
-from backend.config import DefaultConfig
+from .exceptions import OpenWeatherAPIException
+from .config import DefaultConfig
 
 
 class OpenWeatherAPI:

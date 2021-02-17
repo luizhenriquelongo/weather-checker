@@ -2,9 +2,9 @@ import string
 
 from flask_caching import Cache
 
-from backend.app.exceptions import OpenWeatherAPIException
-from backend.app.open_weather_api import OpenWeatherAPI
-from backend.app.utils import StatusCode, error_response
+from .exceptions import OpenWeatherAPIException
+from .open_weather_api import OpenWeatherAPI
+from .utils import StatusCode, error_response
 
 
 class WeatherManager:

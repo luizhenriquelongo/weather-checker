@@ -10,6 +10,9 @@ requests = "*"
 flask-caching = "*"
 python-decouple = "*"
 flask-cors = "*"
+gunicorn = "*"
+flask-script = "*"
+flask-bcrypt = "*"
 
 [dev-packages]
 pytest = "*"

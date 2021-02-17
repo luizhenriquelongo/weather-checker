@@ -6,7 +6,7 @@ import json
 
 @pytest.fixture(scope='module')
 def test_client():
-    flask_app = create_app('backend.config.DefaultConfig')
+    flask_app = create_app('test')
 
     testing_client = flask_app.test_client()
 

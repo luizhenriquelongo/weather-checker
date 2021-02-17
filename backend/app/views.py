@@ -13,7 +13,7 @@ api = OpenWeatherAPI()
 
 class CachedCitiesWeatherView(Resource):
     def get(self):
-        from backend.extensions import cache
+        from .extensions import cache
 
         weather_manager = WeatherManager(api, cache)
         max_number = parser.parse_args().get("max") or current_app.config["MAX_CITIES_TO_RETRIEVE"]
@@ -23,7 +23,7 @@ class CachedCitiesWeatherView(Resource):
 
 class CityWeatherView(Resource):
     def get(self, city_name: str):
-        from backend.extensions import cache
+        from .extensions import cache
 
         weather_manager = WeatherManager(api, cache, city_name)
         weather_data, status_code = weather_manager.get_city_weather()

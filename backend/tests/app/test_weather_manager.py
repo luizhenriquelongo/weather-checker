@@ -1,7 +1,7 @@
 import pytest
 
 from backend.app.weather_manager import WeatherManager
-from backend.config import DefaultConfig
+from backend.app.config import DefaultConfig
 
 
 @pytest.fixture
@@ -126,7 +126,7 @@ def test_get_city_weather_with_cached_data(mocker):
 
 def test_fetch_api_data(mocker):
     city_name = "Pindamonhangaba"
-    mocked_return = ({}, 200)
+    mocked_return = ({"weather": "buddy"}, 200)
     api = mocker.Mock()
     api.get_weather_by_city_name.return_value = mocked_return
 
@@ -136,14 +136,14 @@ def test_fetch_api_data(mocker):
     mocked_clean_data = mocker.patch(
         "backend.app.weather_manager.WeatherManager._clean_data"
     )
-    mocked_clean_data.return_value = mocked_return
+    mocked_clean_data.return_value = mocked_return[0]
 
     wm = WeatherManager(api_instance=api, cache_instance=mocker.Mock(), city_name=city_name)
     weather_data, status_code = wm._fetch_api_data()
 
     api.get_weather_by_city_name.assert_called_with(city_name)
-    mocked_cache_fetch_data.assert_called_with(mocked_return[0])
     mocked_clean_data.assert_called_with(mocked_return[0])
+    mocked_cache_fetch_data.assert_called_with(mocked_return[0])
 
     assert weather_data, status_code == mocked_return
 
@@ -208,37 +208,12 @@ def test_cache_fetched_data(mocker):
     cache.get.return_value = None
 
     mocked_data = {'weather': 'buddy'}
-    mocked_clean_data = mocker.patch(
-        "backend.app.weather_manager.WeatherManager._clean_data"
-    )
-    mocked_clean_data.return_value = mocked_data
 
     wm = WeatherManager(api_instance=mocker.Mock(), cache_instance=cache, city_name=city_name)
     wm._cache_fetched_data(mocked_data)
 
     cache.get.assert_called_with('cached_cities')
-    mocked_clean_data.assert_called_with(mocked_data)
     cache.set.assert_called_with('cached_cities', [mocked_data])
-
-
-def test_cache_fetched_data_with_invalid_data(mocker):
-    city_name = "Pindamonhangaba"
-
-    cache = mocker.Mock()
-    cache.get.return_value = None
-
-    mocked_data = {'weather': 'buddy'}
-    mocked_clean_data = mocker.patch(
-        "backend.app.weather_manager.WeatherManager._clean_data"
-    )
-    mocked_clean_data.return_value = None
-
-    wm = WeatherManager(api_instance=mocker.Mock(), cache_instance=cache, city_name=city_name)
-    wm._cache_fetched_data(mocked_data)
-
-    cache.get.assert_called_with('cached_cities')
-    mocked_clean_data.assert_called_with(mocked_data)
-    cache.set.assert_not_called()
 
 
 def test_clean_data(mocker):
